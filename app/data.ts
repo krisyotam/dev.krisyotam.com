@@ -13,6 +13,7 @@ type WorkExperience = {
   end: string
   link: string
   id: string
+  bullets: string[]
 }
 
 type BlogPost = {
@@ -49,28 +50,43 @@ export const PROJECTS: Project[] = [
 
 export const WORK_EXPERIENCE: WorkExperience[] = [
   {
-    company: 'Reglazed Studio',
-    title: 'CEO',
+    company: 'Freelance',
+    title: 'Pentester',
     start: '2024',
     end: 'Present',
-    link: 'https://ibelick.com',
+    link: 'https://krisyotam.com',
     id: 'work1',
+    bullets: [
+      'Conducted network and web application penetration tests for small businesses',
+      'Performed vulnerability assessments and wrote detailed remediation reports',
+      'Built custom tooling for reconnaissance and enumeration in Python and Bash',
+    ],
   },
   {
     company: 'Freelance',
-    title: 'Design Engineer',
-    start: '2022',
-    end: '2024',
-    link: 'https://ibelick.com',
-    id: 'work2',
-  },
-  {
-    company: 'Freelance',
-    title: 'Front-end Developer',
-    start: '2017',
+    title: 'Systems Engineer',
+    start: '2023',
     end: 'Present',
-    link: 'https://ibelick.com',
+    link: 'https://krisyotam.com',
+    id: 'work2',
+    bullets: [
+      'Designed and maintained self-hosted infrastructure on Arch Linux (Docker, nginx, Tor)',
+      'Configured DNS ad-blocking, reverse proxies, and SSL/TLS across multiple services',
+      'Automated deployment pipelines with shell scripts and systemd services',
+    ],
+  },
+  {
+    company: 'Freelance',
+    title: 'Full-Stack Developer',
+    start: '2022',
+    end: 'Present',
+    link: 'https://krisyotam.com',
     id: 'work3',
+    bullets: [
+      'Built production web applications with Next.js, TypeScript, and SQLite',
+      'Developed REST APIs and integrated third-party services',
+      'Shipped responsive, accessible interfaces with Tailwind CSS',
+    ],
   },
 ]
 
@@ -106,20 +122,20 @@ export const BLOG_POSTS: BlogPost[] = [
 export const SOCIAL_LINKS: SocialLink[] = [
   {
     label: 'Github',
-    link: 'https://github.com/ibelick',
+    link: 'https://github.com/krisyotam',
   },
   {
     label: 'Twitter',
-    link: 'https://twitter.com/ibelick',
+    link: 'https://x.com/krisyotam',
   },
   {
     label: 'LinkedIn',
-    link: 'https://www.linkedin.com/in/ibelick',
+    link: 'https://www.linkedin.com/in/krisyotam',
   },
   {
-    label: 'Instagram',
-    link: 'https://www.instagram.com/ibelick',
+    label: 'Bluesky',
+    link: 'https://bsky.app/profile/krisyotam.com',
   },
 ]
 
-export const EMAIL = 'your@email.com'
+export const EMAIL = 'kris@krisyotam.com'

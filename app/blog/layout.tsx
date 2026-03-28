@@ -19,7 +19,8 @@ function CopyButton() {
         setText('Copied')
         navigator.clipboard.writeText(currentUrl)
       }}
-      className="font-base flex items-center gap-1 text-center text-sm text-zinc-500 transition-colors dark:text-zinc-400"
+      className="font-base flex items-center gap-1 text-center text-sm transition-colors"
+      style={{ color: 'hsl(var(--muted-foreground))' }}
       type="button"
     >
       <TextMorph>{text}</TextMorph>
@@ -35,9 +36,10 @@ export default function LayoutBlogPost({
 }) {
   return (
     <>
-      <div className="pointer-events-none fixed left-0 top-0 z-10 h-12 w-full bg-gray-100 to-transparent backdrop-blur-xl [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)] dark:bg-zinc-950" />
+      <div className="pointer-events-none fixed left-0 top-0 z-10 h-12 w-full to-transparent backdrop-blur-xl [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]" style={{ backgroundColor: 'hsl(var(--background))' }} />
       <ScrollProgress
-        className="fixed top-0 z-20 h-0.5 bg-gray-300 dark:bg-zinc-600"
+        className="fixed top-0 z-20 h-0.5"
+        style={{ backgroundColor: 'hsl(var(--border))' }}
         springOptions={{
           bounce: 0,
         }}

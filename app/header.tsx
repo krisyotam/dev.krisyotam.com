@@ -6,17 +6,18 @@ export function Header() {
   return (
     <header className="mb-8 flex items-center justify-between">
       <div>
-        <Link href="/" className="font-medium text-black dark:text-white">
-          Julien Nim
+        <Link href="/" className="font-medium" style={{ color: 'hsl(var(--foreground))' }}>
+          Kris Yotam
         </Link>
         <TextEffect
           as="p"
           preset="fade"
           per="char"
-          className="text-zinc-600 dark:text-zinc-500"
+          className=""
+          style={{ color: 'hsl(var(--muted-foreground))' }}
           delay={0.5}
         >
-          Design Engineer
+          Systems Engineer
         </TextEffect>
       </div>
     </header>

@@ -1,6 +1,7 @@
 'use client'
-import { motion } from 'motion/react'
-import { XIcon } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
+import { XIcon, PlusIcon, MinusIcon } from 'lucide-react'
 import { Spotlight } from '@/components/ui/spotlight'
 import { Magnetic } from '@/components/ui/magnetic'
 import {
@@ -19,6 +20,7 @@ import {
   EMAIL,
   SOCIAL_LINKS,
 } from './data'
+import { sounds } from '@/lib/sounds'
 
 const VARIANTS_CONTAINER = {
   hidden: { opacity: 0 },
@@ -62,7 +64,13 @@ function ProjectVideo({ src }: ProjectVideoProps) {
         />
       </MorphingDialogTrigger>
       <MorphingDialogContainer>
-        <MorphingDialogContent className="relative aspect-video rounded-2xl bg-zinc-50 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950 dark:ring-zinc-800/50">
+        <MorphingDialogContent
+          className="relative aspect-video rounded-2xl p-1 ring-1 ring-inset"
+          style={{
+            backgroundColor: 'hsl(var(--card))',
+            '--tw-ring-color': 'hsl(var(--border))',
+          } as React.CSSProperties}
+        >
           <video
             src={src}
             autoPlay
@@ -72,7 +80,8 @@ function ProjectVideo({ src }: ProjectVideoProps) {
           />
         </MorphingDialogContent>
         <MorphingDialogClose
-          className="fixed top-6 right-6 h-fit w-fit rounded-full bg-white p-1"
+          className="fixed top-6 right-6 h-fit w-fit rounded-full p-1"
+          style={{ backgroundColor: 'hsl(var(--card))' }}
           variants={{
             initial: { opacity: 0 },
             animate: {
@@ -82,7 +91,7 @@ function ProjectVideo({ src }: ProjectVideoProps) {
             exit: { opacity: 0, transition: { duration: 0 } },
           }}
         >
-          <XIcon className="h-5 w-5 text-zinc-500" />
+          <XIcon className="h-5 w-5" style={{ color: 'hsl(var(--muted-foreground))' }} />
         </MorphingDialogClose>
       </MorphingDialogContainer>
     </MorphingDialog>
@@ -100,7 +109,20 @@ function MagneticSocialLink({
     <Magnetic springOptions={{ bounce: 0 }} intensity={0.3}>
       <a
         href={link}
-        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-2.5 py-1 text-sm text-black transition-colors duration-200 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full px-2.5 py-1 text-sm transition-colors duration-200"
+        style={{
+          backgroundColor: 'hsl(var(--muted))',
+          color: 'hsl(var(--foreground))',
+        }}
+        onMouseEnter={(e) => {
+          sounds.tick()
+          e.currentTarget.style.backgroundColor = 'hsl(var(--primary))'
+          e.currentTarget.style.color = 'hsl(var(--primary-foreground))'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'hsl(var(--muted))'
+          e.currentTarget.style.color = 'hsl(var(--foreground))'
+        }}
       >
         {children}
         <svg
@@ -123,6 +145,64 @@ function MagneticSocialLink({
   )
 }
 
+function ExpandableJob({ job }: { job: typeof WORK_EXPERIENCE[number] }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl p-[1px] cursor-pointer"
+      style={{ backgroundColor: 'hsl(var(--border))' }}
+      onClick={() => { sounds.toggle(); setOpen(!open) }}
+    >
+      <Spotlight
+        className="from-zinc-900 via-zinc-800 to-zinc-700 blur-2xl dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-50"
+        size={64}
+      />
+      <div
+        className="relative h-full w-full rounded-[15px] p-4"
+        style={{ backgroundColor: 'hsl(var(--background))' }}
+      >
+        <div className="relative flex w-full flex-row justify-between items-start">
+          <div>
+            <h4 className="font-normal" style={{ color: 'hsl(var(--foreground))' }}>
+              {job.title}
+            </h4>
+            <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+              {job.company}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+              {job.start} - {job.end}
+            </p>
+            {open ? (
+              <MinusIcon className="h-4 w-4" style={{ color: 'hsl(var(--muted-foreground))' }} />
+            ) : (
+              <PlusIcon className="h-4 w-4" style={{ color: 'hsl(var(--muted-foreground))' }} />
+            )}
+          </div>
+        </div>
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden mt-3 space-y-1 list-disc list-inside text-sm"
+              style={{ color: 'hsl(var(--muted-foreground))' }}
+            >
+              {job.bullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+}
+
 export default function Personal() {
   return (
     <motion.main
@@ -135,11 +215,34 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <div className="flex-1">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Focused on creating intuitive and performant web experiences.
-            Bridging the gap between design and development.
+        <div className="flex-1 space-y-4">
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+            I build and break systems for a living. My work spans penetration
+            testing, infrastructure engineering, and full-stack development. I
+            care about security, simplicity, and software that does exactly what
+            it claims to.
           </p>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+            I am particularly interested in:
+          </p>
+          <ul className="list-disc list-inside space-y-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            <li>Offensive security and vulnerability research</li>
+            <li>Self-hosted infrastructure and homelab design</li>
+            <li>Developer tooling and CLI utilities</li>
+            <li>Systems programming and low-level networking</li>
+          </ul>
+          <div className="pt-2">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+              style={{ border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black opacity-75 dark:bg-orange-400" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-black dark:bg-orange-500" />
+              </span>
+              Currently on the job market
+            </span>
+          </div>
         </div>
       </motion.section>
 
@@ -147,23 +250,33 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">Selected Projects</h3>
+        <h3 className="mb-5 text-sm font-medium tracking-wide">SELECTED PROJECTS</h3>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {PROJECTS.map((project) => (
             <div key={project.name} className="space-y-2">
-              <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
+              <div
+                className="relative rounded-2xl p-1 ring-1 ring-inset"
+                style={{
+                  backgroundColor: 'hsl(var(--accent))',
+                  '--tw-ring-color': 'hsl(var(--border))',
+                } as React.CSSProperties}
+              >
                 <ProjectVideo src={project.video} />
               </div>
               <div className="px-1">
                 <a
-                  className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
+                  className="font-base group relative inline-block font-[450]"
                   href={project.link}
                   target="_blank"
+                  style={{ color: 'hsl(var(--foreground))' }}
                 >
                   {project.name}
-                  <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 dark:bg-zinc-50 transition-all duration-200 group-hover:max-w-full"></span>
+                  <span
+                    className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 transition-all duration-200 group-hover:max-w-full"
+                    style={{ backgroundColor: 'hsl(var(--foreground))' }}
+                  ></span>
                 </a>
-                <p className="text-base text-zinc-600 dark:text-zinc-400">
+                <p className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>
                   {project.description}
                 </p>
               </div>
@@ -176,36 +289,10 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">Work Experience</h3>
+        <h3 className="mb-5 text-sm font-medium tracking-wide">EXPERIENCE</h3>
         <div className="flex flex-col space-y-2">
           {WORK_EXPERIENCE.map((job) => (
-            <a
-              className="relative overflow-hidden rounded-2xl bg-zinc-300/30 p-[1px] dark:bg-zinc-600/30"
-              href={job.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              key={job.id}
-            >
-              <Spotlight
-                className="from-zinc-900 via-zinc-800 to-zinc-700 blur-2xl dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-50"
-                size={64}
-              />
-              <div className="relative h-full w-full rounded-[15px] bg-white p-4 dark:bg-zinc-950">
-                <div className="relative flex w-full flex-row justify-between">
-                  <div>
-                    <h4 className="font-normal dark:text-zinc-100">
-                      {job.title}
-                    </h4>
-                    <p className="text-zinc-500 dark:text-zinc-400">
-                      {job.company}
-                    </p>
-                  </div>
-                  <p className="text-zinc-600 dark:text-zinc-400">
-                    {job.start} - {job.end}
-                  </p>
-                </div>
-              </div>
-            </a>
+            <ExpandableJob key={job.id} job={job} />
           ))}
         </div>
       </motion.section>
@@ -214,11 +301,11 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-3 text-lg font-medium">Blog</h3>
+        <h3 className="mb-3 text-sm font-medium tracking-wide">PUBLICATIONS</h3>
         <div className="flex flex-col space-y-0">
           <AnimatedBackground
             enableHover
-            className="h-full w-full rounded-lg bg-zinc-100 dark:bg-zinc-900/80"
+            className="h-full w-full rounded-lg bg-[hsl(var(--muted))]"
             transition={{
               type: 'spring',
               bounce: 0,
@@ -231,12 +318,13 @@ export default function Personal() {
                 className="-mx-3 rounded-xl px-3 py-3"
                 href={post.link}
                 data-id={post.uid}
+                onMouseEnter={() => sounds.tick()}
               >
                 <div className="flex flex-col space-y-1">
-                  <h4 className="font-normal dark:text-zinc-100">
+                  <h4 className="font-normal" style={{ color: 'hsl(var(--foreground))' }}>
                     {post.title}
                   </h4>
-                  <p className="text-zinc-500 dark:text-zinc-400">
+                  <p style={{ color: 'hsl(var(--muted-foreground))' }}>
                     {post.description}
                   </p>
                 </div>
@@ -250,10 +338,10 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <h3 className="mb-5 text-lg font-medium">Connect</h3>
-        <p className="mb-5 text-zinc-600 dark:text-zinc-400">
+        <h3 className="mb-5 text-sm font-medium tracking-wide">CONNECT</h3>
+        <p className="mb-5" style={{ color: 'hsl(var(--muted-foreground))' }}>
           Feel free to contact me at{' '}
-          <a className="underline dark:text-zinc-300" href={`mailto:${EMAIL}`}>
+          <a className="underline" style={{ color: 'hsl(var(--foreground))' }} href={`mailto:${EMAIL}`}>
             {EMAIL}
           </a>
         </p>
